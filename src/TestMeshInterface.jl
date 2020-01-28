@@ -5,17 +5,20 @@ import MeshInterface: fesettrait, femeshtrait
 import MeshInterface: _numberofsets, _numberofelements, _getconn!, _numberofnodesperelement
 using FinEtools
 
+struct FinEtoolsFESetTrait<:FESetTrait;    end
+struct FinEtoolsFEMeshTrait<:FEMeshTrait;    end
+
 struct FEMesh
     fenodes
     fesets
 end
 
-fesettrait(::Type{T}) where {T<:FinEtools.FESetModule.AbstractFESet} = FESetTrait()
-femeshtrait(::Type{FEMesh}) = FEMeshTrait()
+fesettrait(::Type{T}) where {T<:FinEtools.FESetModule.AbstractFESet} = FinEtoolsFESetTrait()
+femeshtrait(::Type{FEMesh}) = FinEtoolsFEMeshTrait()
 
-_numberofsets(::FEMeshTrait, m::FEMesh) = length(m.fesets)
-_numberofnodesperelement(::FESetTrait, fes::T) where {T} = nodesperelem(fes)
-_numberofelements(::FESetTrait, fes::T) where {T} = length(fes.conn)
-_getconn!(::FESetTrait, c::C, fes::T, i)  where {C, T} = (c .= fes.conn[i])
+_numberofsets(::FinEtoolsFEMeshTrait, m::FEMesh) = length(m.fesets)
+_numberofnodesperelement(::FinEtoolsFESetTrait, fes::T) where {T} = nodesperelem(fes)
+_numberofelements(::FinEtoolsFESetTrait, fes::T) where {T} = length(fes.conn)
+_getconn!(::FinEtoolsFESetTrait, c::C, fes::T, i)  where {C, T} = (c .= fes.conn[i])
 
 end # module
